@@ -145,8 +145,8 @@ with st.expander("➕ New Request", expanded=False):
         c1, c2 = st.columns(2)
 
         with c1:
-            customer_name = st.text_input("Customer Name", required=True)
-            phone = st.text_input("Phone", required=True)
+            customer_name = st.text_input("Customer Name")
+            phone = st.text_input("Phone")
             email = st.text_input("Email")
 
         with c2:
@@ -159,13 +159,17 @@ with st.expander("➕ New Request", expanded=False):
 
         if submitted:
 
-            new_order = CampaniaOrder.new(
-                customer_name=customer_name,
-                customer_phone=phone,
-                created_by=user,
-                product_requested=product,
-                customer_email=email,
-                notes=notes
+            if not customer_name or not phone:
+                st.warning("Customer Name and Phone are required.")
+
+            else:
+                new_order = CampaniaOrder.new(
+                    customer_name=customer_name,
+                    customer_phone=phone,
+                    created_by=user,
+                    product_requested=product,
+                    customer_email=email,
+                    notes=notes
             )
 
             new_order.quantity = quantity

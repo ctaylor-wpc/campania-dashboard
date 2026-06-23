@@ -112,7 +112,7 @@ class CampaniaDatabase:
         """
 
         last_id = self._get_last_request_id()
-        order.request_id = CampaniaOrder.request_id or self._next_id(last_id)
+        order.request_id = self._next_id(last_id)
 
         self.orders_ws.append_row(list(order.to_dict().values()))
 
