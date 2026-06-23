@@ -12,10 +12,6 @@ No IDs or credentials should be hardcoded.
 import streamlit as st
 
 
-# =====================================================
-# GOOGLE SHEETS
-# =====================================================
-
 SHEET_ID = st.secrets["sheet_id"]
 
 ORDERS_WORKSHEET = "Orders"
@@ -23,70 +19,53 @@ AUDIT_WORKSHEET = "Audit Log"
 SETTINGS_WORKSHEET = "Settings"
 
 
-# =====================================================
-# APP SETTINGS
-# =====================================================
-
 APP_TITLE = "Campania Order Dashboard"
-
 APP_ICON = "🏺"
 
+# Hardcoded per Chris's request - no longer configurable in Settings
 DEFAULT_MINIMUM_ORDER = 2500.00
 
 
-# =====================================================
-# STATUS OPTIONS
-# =====================================================
-
 ORDER_STATUS_OPTIONS = [
-    "Awaiting Quote",
-    "Awaiting Customer Approval",
-    "Awaiting Minimum Order",
-    "Ready To Order",
-    "Order Placed",
-    "Arrived",
-    "Picked Up",
-    "Delivered",
+    "Lead",
+    "Quoted",
+    "Paid",
+    "Ordered",
+    "Received",
     "Complete"
 ]
 
+# Statuses that belong in the Sales Leads section instead of Active Orders
+LEAD_STATUSES = ["Lead", "Quoted"]
 
 PAYMENT_STATUS_OPTIONS = [
-    "No Quote Provided",
-    "Estimate Provided",
-    "Deposit Received",
-    "Paid In Full"
+    "N/A",
+    "Deposit Taken",
+    "Invoiced",
+    "Paid in Full"
 ]
 
-
 DELIVERY_STATUS_OPTIONS = [
-    "Not Needed",
-    "Not Scheduled",
-    "Scheduled",
+    "N/A",
+    "In Queue",
     "Delivered"
 ]
 
-
-# =====================================================
-# COLORS
-# =====================================================
+INSTALL_STATUS_OPTIONS = [
+    "N/A",
+    "In Queue",
+    "Installed"
+]
 
 STATUS_COLORS = {
-    "Awaiting Quote": "#F97316",
-    "Awaiting Customer Approval": "#FACC15",
-    "Awaiting Minimum Order": "#EF4444",
-    "Ready To Order": "#22C55E",
-    "Order Placed": "#3B82F6",
-    "Arrived": "#8B5CF6",
-    "Picked Up": "#06B6D4",
-    "Delivered": "#10B981",
+    "Lead": "#F97316",
+    "Quoted": "#FACC15",
+    "Paid": "#3B82F6",
+    "Ordered": "#8B5CF6",
+    "Received": "#06B6D4",
     "Complete": "#6B7280",
 }
 
-
-# =====================================================
-# COLUMN DEFINITIONS
-# =====================================================
 
 ORDER_COLUMNS = [
     "Request ID",
@@ -120,5 +99,9 @@ ORDER_COLUMNS = [
     "Payment Status",
     "Order Status",
 
-    "Expected Arrival Date"
+    "Expected Arrival Date",
+
+    # New - must exist as new columns at the END of the "Orders" sheet
+    "Install Required",
+    "Install Status"
 ]

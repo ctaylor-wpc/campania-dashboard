@@ -5,7 +5,7 @@ Email notification system for Campania Order Dashboard.
 
 Responsibilities:
 - Send email alerts
-- Respect settings (enabled / silenced / recipients)
+- Respect settings (silenced / recipients)
 - Provide reusable notification triggers
 
 Design:
@@ -23,31 +23,20 @@ import streamlit as st
 import config
 
 
-# =====================================================
-# EMAIL SENDER CORE
-# =====================================================
-
 class EmailNotifier:
 
     def __init__(self, settings_manager):
-
         """
         settings_manager = SettingsManager instance
         """
 
         self.settings = settings_manager
 
-        # SMTP config from Streamlit secrets
         self.smtp_host = st.secrets.get("smtp_host", "")
         self.smtp_port = int(st.secrets.get("smtp_port", 587))
         self.smtp_user = st.secrets.get("smtp_user", "")
         self.smtp_pass = st.secrets.get("smtp_pass", "")
         self.from_email = st.secrets.get("from_email", self.smtp_user)
-
-
-    # ---------------------------------------------
-    # CORE EMAIL FUNCTION
-    # ---------------------------------------------
 
     def _send_email(self, subject: str, body: str, recipients: list):
 
@@ -74,16 +63,8 @@ class EmailNotifier:
             print(f"Email failed: {e}")
             return False
 
-
-    # ---------------------------------------------
-    # MASTER GUARD (IMPORTANT)
-    # ---------------------------------------------
-
     def _can_send(self) -> bool:
-
-        if not self.settings.notifications_enabled():
-            return False
-
+        # Notifications are on by default - silencing is the only opt-out
         if self.settings.notifications_silenced():
             return False
 
@@ -91,11 +72,6 @@ class EmailNotifier:
             return False
 
         return True
-
-
-    # ---------------------------------------------
-    # GENERIC NOTIFICATION WRAPPER
-    # ---------------------------------------------
 
     def send(self, subject: str, message: str):
 
@@ -106,10 +82,6 @@ class EmailNotifier:
 
         return self._send_email(subject, message, recipients)
 
-
-# =====================================================
-# ORDER-BASED NOTIFICATIONS
-# =====================================================
 
 def notify_minimum_reached(notifier: EmailNotifier, total_cost: float):
 

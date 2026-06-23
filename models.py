@@ -9,17 +9,13 @@ This defines a single source of truth for:
 - Serialization helpers
 """
 
-from dataclasses import dataclass, asdict, field
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from typing import Optional
 import uuid
 
 import config
 
-
-# =====================================================
-# HELPERS
-# =====================================================
 
 def now_timestamp() -> str:
     """Return consistent timestamp string."""
@@ -44,28 +40,18 @@ def generate_request_id(last_id: Optional[str] = None) -> str:
         return f"CAM-{uuid.uuid4().hex[:4].upper()}"
 
 
-# =====================================================
-# ORDER MODEL
-# =====================================================
-
 @dataclass
 class CampaniaOrder:
     """
     Core order object used throughout the application.
     """
 
-    # -------------------------
-    # SYSTEM FIELDS
-    # -------------------------
     request_id: str
     created_timestamp: str
     last_modified_timestamp: str
     created_by: str
     last_modified_by: str
 
-    # -------------------------
-    # CUSTOMER INFO
-    # -------------------------
     customer_name: str
     customer_phone: str
     customer_email: str = ""
@@ -75,39 +61,26 @@ class CampaniaOrder:
     state: str = ""
     zip_code: str = ""
 
-    # -------------------------
-    # ORDER INFO
-    # -------------------------
     product_requested: str = ""
     campania_sku: str = ""
     quantity: int = 1
     notes: str = ""
 
-    # -------------------------
-    # FINANCIALS
-    # -------------------------
     customer_price: float = 0.0
     campania_cost: float = 0.0
     deposit_amount: float = 0.0
 
-    # -------------------------
-    # DELIVERY
-    # -------------------------
     delivery_required: bool = False
     delivery_cost: float = 0.0
-    delivery_status: str = "Not Needed"
+    delivery_status: str = "N/A"
 
-    # -------------------------
-    # STATUS
-    # -------------------------
-    payment_status: str = "No Quote Provided"
-    order_status: str = "Awaiting Quote"
+    payment_status: str = "N/A"
+    order_status: str = "Lead"
 
     expected_arrival_date: str = ""
 
-    # =====================================================
-    # FACTORY METHODS
-    # =====================================================
+    install_required: bool = False
+    install_status: str = "N/A"
 
     @staticmethod
     def new(customer_name: str,
@@ -135,10 +108,6 @@ class CampaniaOrder:
             product_requested=product_requested,
             notes=notes
         )
-
-    # =====================================================
-    # SERIALIZATION
-    # =====================================================
 
     def to_dict(self) -> dict:
         """
@@ -178,10 +147,13 @@ class CampaniaOrder:
 
             delivery_required=str(data.get("Delivery Required", "False")).lower() == "true",
             delivery_cost=float(data.get("Delivery Cost") or 0),
-            delivery_status=data.get("Delivery Status", "Not Needed"),
+            delivery_status=data.get("Delivery Status", "N/A"),
 
-            payment_status=data.get("Payment Status", "No Quote Provided"),
-            order_status=data.get("Order Status", "Awaiting Quote"),
+            payment_status=data.get("Payment Status", "N/A"),
+            order_status=data.get("Order Status", "Lead"),
 
-            expected_arrival_date=data.get("Expected Arrival Date", "")
+            expected_arrival_date=data.get("Expected Arrival Date", ""),
+
+            install_required=str(data.get("Install Required", "False")).lower() == "true",
+            install_status=data.get("Install Status", "N/A")
         )
