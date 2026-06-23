@@ -6,6 +6,8 @@ import config
 from database import CampaniaDatabase
 from models import CampaniaOrder
 
+from settings import SettingsManager, render_settings_panel
+
 
 # =====================================================
 # PAGE CONFIG
@@ -21,6 +23,16 @@ db = CampaniaDatabase()
 
 
 # =====================================================
+# SETTINGS GEAR IMPORT
+# =====================================================
+
+db = CampaniaDatabase()
+settings_manager = SettingsManager(db.sheet)
+
+with st.sidebar.expander("⚙️ Settings"):
+    render_settings_panel(settings_manager)
+
+# =====================================================
 # SESSION STATE (INITIALS)
 # =====================================================
 
@@ -30,7 +42,7 @@ if "initials" not in st.session_state:
 
     st.write("Enter your initials to begin")
 
-    initials = st.text_input("Initials (e.g. EMC, CT, TC)")
+    initials = st.text_input("Initials (e.g. EMC, JW, etc)")
 
     if st.button("Continue") and initials:
         st.session_state.initials = initials.upper()
@@ -43,6 +55,52 @@ user = st.session_state.initials
 
 
 # =====================================================
+# NEW REQUEST
+# =====================================================
+
+with st.expander("➕ New Request", expanded=False):
+
+    with st.form("new_request_form"):
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+            customer_name = st.text_input("Customer Name")
+            phone = st.text_input("Phone")
+            email = st.text_input("Email")
+
+        with c2:
+            product = st.text_input("Product Requested")
+            quantity = st.number_input("Quantity", min_value=1, value=1)
+
+        notes = st.text_area("Notes")
+
+        submitted = st.form_submit_button("Create Request")
+
+        if submitted:
+
+            if not customer_name or not phone:
+                st.warning("Customer Name and Phone are required.")
+
+            else:
+                new_order = CampaniaOrder.new(
+                    customer_name=customer_name,
+                    customer_phone=phone,
+                    created_by=user,
+                    product_requested=product,
+                    customer_email=email,
+                    notes=notes
+            )
+
+            new_order.quantity = quantity
+
+            new_id = db.add_order(new_order)
+
+            st.success(f"Created Request {new_id}")
+            st.rerun()
+
+
+# =====================================================
 # LOAD DATA
 # =====================================================
 
@@ -52,7 +110,7 @@ df = pd.DataFrame([o.to_dict() for o in orders]) if orders else pd.DataFrame()
 
 
 if df.empty:
-    st.info("No orders found.")
+    st.info("No orders yet — add your first request above.")
     st.stop()
 
 
@@ -132,53 +190,6 @@ with col3:
 
 
 st.divider()
-
-
-# =====================================================
-# NEW REQUEST
-# =====================================================
-
-with st.expander("➕ New Request", expanded=False):
-
-    with st.form("new_request_form"):
-
-        c1, c2 = st.columns(2)
-
-        with c1:
-            customer_name = st.text_input("Customer Name")
-            phone = st.text_input("Phone")
-            email = st.text_input("Email")
-
-        with c2:
-            product = st.text_input("Product Requested")
-            quantity = st.number_input("Quantity", min_value=1, value=1)
-
-        notes = st.text_area("Notes")
-
-        submitted = st.form_submit_button("Create Request")
-
-        if submitted:
-
-            if not customer_name or not phone:
-                st.warning("Customer Name and Phone are required.")
-
-            else:
-                new_order = CampaniaOrder.new(
-                    customer_name=customer_name,
-                    customer_phone=phone,
-                    created_by=user,
-                    product_requested=product,
-                    customer_email=email,
-                    notes=notes
-            )
-
-            new_order.quantity = quantity
-
-            new_id = db.add_order(new_order)
-
-            st.success(f"Created Request {new_id}")
-            st.rerun()
-
 
 # =====================================================
 # EDITABLE TABLE
