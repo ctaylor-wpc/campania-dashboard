@@ -20,10 +20,10 @@ SETTINGS_WORKSHEET = "Settings"
 
 
 APP_TITLE = "Campania Order Dashboard"
-APP_ICON = "🏺"
+APP_ICON = "⛲"
 
 # Hardcoded per Chris's request - no longer configurable in Settings
-DEFAULT_MINIMUM_ORDER = 2500.00
+DEFAULT_MINIMUM_ORDER = 1500.00
 
 
 ORDER_STATUS_OPTIONS = [
