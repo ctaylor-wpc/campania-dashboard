@@ -38,6 +38,11 @@ ORDER_STATUS_OPTIONS = [
 # Statuses that belong in the Sales Leads section instead of Active Orders
 LEAD_STATUSES = ["Lead", "Quoted"]
 
+# Statuses shown in the Active Orders section. Complete is intentionally
+# excluded - completed orders drop off the dashboard and only live in
+# the spreadsheet. Change the status back to bring one onto the dashboard.
+ACTIVE_STATUSES = ["Paid", "Ordered", "Received"]
+
 PAYMENT_STATUS_OPTIONS = [
     "N/A",
     "Deposit Taken",
@@ -71,8 +76,6 @@ ORDER_COLUMNS = [
     "Request ID",
     "Created Timestamp",
     "Last Modified Timestamp",
-    "Created By",
-    "Last Modified By",
 
     "Customer Name",
     "Customer Phone",
@@ -101,7 +104,9 @@ ORDER_COLUMNS = [
 
     "Expected Arrival Date",
 
-    # New - must exist as new columns at the END of the "Orders" sheet
     "Install Required",
-    "Install Status"
+    "Install Status",
+
+    # New - must exist as a new column at the END of the "Orders" sheet
+    "Install Cost"
 ]

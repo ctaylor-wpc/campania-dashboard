@@ -49,8 +49,6 @@ class CampaniaOrder:
     request_id: str
     created_timestamp: str
     last_modified_timestamp: str
-    created_by: str
-    last_modified_by: str
 
     customer_name: str
     customer_phone: str
@@ -81,11 +79,11 @@ class CampaniaOrder:
 
     install_required: bool = False
     install_status: str = "N/A"
+    install_cost: float = 0.0
 
     @staticmethod
     def new(customer_name: str,
             customer_phone: str,
-            created_by: str,
             product_requested: str = "",
             customer_email: str = "",
             notes: str = "") -> "CampaniaOrder":
@@ -99,8 +97,6 @@ class CampaniaOrder:
             request_id="TEMP",  # replaced by database layer
             created_timestamp=timestamp,
             last_modified_timestamp=timestamp,
-            created_by=created_by,
-            last_modified_by=created_by,
 
             customer_name=customer_name,
             customer_phone=customer_phone,
@@ -124,8 +120,6 @@ class CampaniaOrder:
             request_id=data.get("Request ID", ""),
             created_timestamp=data.get("Created Timestamp", ""),
             last_modified_timestamp=data.get("Last Modified Timestamp", ""),
-            created_by=data.get("Created By", ""),
-            last_modified_by=data.get("Last Modified By", ""),
 
             customer_name=data.get("Customer Name", ""),
             customer_phone=data.get("Customer Phone", ""),
@@ -155,5 +149,6 @@ class CampaniaOrder:
             expected_arrival_date=data.get("Expected Arrival Date", ""),
 
             install_required=str(data.get("Install Required", "False")).lower() == "true",
-            install_status=data.get("Install Status", "N/A")
+            install_status=data.get("Install Status", "N/A"),
+            install_cost=float(data.get("Install Cost") or 0)
         )
